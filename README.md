@@ -20,3 +20,7 @@ To create a new wpbakery component, all you need to do is create a new `.vue` fi
 ## Credits
 
 Huge thanks to [wp-boilerplate-vue-with-vite](https://github.com/hasanuzzamanbe/wp-boilerplate-vue-with-vite) for the inspiration and the base of this project.
+
+## Note
+
+Whilst this template should work fine without [WPBakery](https://wpbakery.com/), it is heavily recommended to use it.
