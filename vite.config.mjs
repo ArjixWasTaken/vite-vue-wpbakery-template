@@ -5,19 +5,11 @@ import copy from "rollup-plugin-copy";
 import generateShortcodes from "./includes/generate-shortcodes.mjs";
 
 import { fileURLToPath, URL } from "node:url";
+import { resolve } from "node:path";
 
-let dirname = __dirname.split("wp-content")[1]?.split("\\")?.join("/");
-if (dirname?.[0] == "/") dirname = dirname?.substring(1);
-if (dirname?.[(dirname?.length || 0) - 1] == "/")
-   dirname = dirname.substring(0, dirname.length - 1);
-
-if (!dirname) {
-   console.error("Error: Could not find wp-content directory.");
-   process.exit(1);
-}
-
+const dirname = resolve(__dirname).replace(/\\/g, "/").split("/").pop();
 export default defineConfig({
-   base: `/wp-content/${dirname}/assets/`,
+   base: `/wp-content/plugins/${dirname}/assets/`,
    plugins: [
       generateShortcodes(),
       vue(),
