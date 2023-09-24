@@ -1,0 +1,8 @@
+node_modules/
+package-lock.json
+includes/Classes/ShortCodes/
+includes/Classes/Shortcodes.php
+
+assets/
+!src/assets/
+
