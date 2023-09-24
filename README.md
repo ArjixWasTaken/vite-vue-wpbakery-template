@@ -16,3 +16,7 @@ To create a new wpbakery component, all you need to do is create a new `.vue` fi
 
 > [!IMPORTANT]  
 > Within the `.vue` file, you must define the props that the component will receive, if there are no props then `defineProps({})` will suffice, it is hardcoded to look for it right now.
+
+## Credits
+
+Huge thanks to [wp-boilerplate-vue-with-vite](https://github.com/hasanuzzamanbe/wp-boilerplate-vue-with-vite) for the inspiration and the base of this project.
