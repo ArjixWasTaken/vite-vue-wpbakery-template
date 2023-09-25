@@ -8,6 +8,12 @@ const propDefRegex = /defineProps\({.*?}\)/s;
 const whitespaceRegex = /\s+(?=([^"]*"[^"]*")*[^"]*$)/g;
 const propRegex = /(\w+):({.*?})/g;
 
+const indent = (string, size) =>
+   string
+      .split("\n")
+      .map((e) => " ".repeat(size) + e)
+      .join("\n");
+
 const camelCaseToSnakeCase = (/**@type {String} */ str) =>
    str.replace(/(?<=[a-z0-9])([A-Z])/g, "_$1").toLowerCase();
 
@@ -70,8 +76,7 @@ class {{ComponentName}}
             <script type="module">
                 await window._app_.load;
                 window._app_.with((create, { {{ComponentName}} }) => {
-{{AsIntUtil}}\
-\
+{{AsIntUtil}}
                     create({{ComponentName}}, {
 {{AttrPassthru}}
                     }).mount("#[uuid4]");
@@ -90,11 +95,12 @@ const AsIntUtil = `
 */
 const asInt = (v) => {
     try {
-    const num = parseInt(v, 10);
+      const num = parseInt(v, 10);
       return isNaN(num) ? 0 : num;
     } catch { return 0 }
 };
 `;
+
 
 const indexFileTemplate = `\
 <?php
@@ -281,7 +287,7 @@ export default function generateShortcodes() {
             }
 
             code = code
-               .replace("{{AsIntUtil}}", useIntUtil ? AsIntUtil : "")
+               .replace("{{AsIntUtil}}", useIntUtil ? indent(AsIntUtil, 20) : "")
                .replace("{{AttrDecl}}", attrDecl)
                .replace("{{AttrPassthru}}", attrPassthru)
                .replace("{{ParamDecl}}", paramDecl)
