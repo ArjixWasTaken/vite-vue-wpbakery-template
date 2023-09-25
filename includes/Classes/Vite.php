@@ -116,7 +116,7 @@ class Vite
     private function addModuleToScript($tag, $handle, $src)
     {
         if (in_array($handle, (static::$instance)->moduleScripts)) {
-            $tag = '<script type="module" src="' . esc_url($src) . '"></script>';
+            $tag = str_replace(['<script'], ['<script type="module"'], $tag);
         }
         return $tag;
     }

@@ -34,7 +34,6 @@ class MyPlugin
         $this->disableUpdateNag();
         add_action("admin_menu", [$this, 'admin_menu']);
 
-        $this->vars();
         (new \MyPlugin\Classes\Assets())->load();
     }
 
@@ -70,30 +69,6 @@ class MyPlugin
             }
         }, 20);
     }
-
-    public function vars()
-    { ?>
-        <script>
-            if (!("__VARS__" in window)) {
-                window.__VARS__ = {
-                    isAdmin: <?php echo str_starts_with($_SERVER["REQUEST_URI"], '/wp-admin') ? "true" : ((function_exists('vc_is_inline') && vc_is_inline()) ? "true" : "false") ?>,
-                    nonce: "<?php echo wp_create_nonce('wp_rest') ?>"
-                };
-            }
-
-            if (!("_app_" in window))
-                window._app_ = {};
-
-            window._app_.load = new Promise(resolve => {
-                const inner = () => {
-                    if (window._app_ && "components" in window._app_ && (resolve() || true)) return;
-                    setTimeout(inner, 20);
-                }
-                inner();
-            });
-        </script>
-
-    <?php }
 
     public function loadClasses()
     {
