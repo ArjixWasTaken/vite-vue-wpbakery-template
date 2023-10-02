@@ -1,12 +1,13 @@
-import { readFile, readdir, unlink, writeFile, mkdir } from "fs/promises";
-import { join, resolve, basename } from "path";
-import { existsSync } from "fs";
+import { readFile, readdir, unlink, writeFile, mkdir, stat } from "fs/promises";
+import { join, resolve, basename } from "node:path";
 
 import { createFilter } from "@rollup/pluginutils";
 
 import { parse as parseSFC } from "@vue/compiler-sfc";
 import { parse as parseAst } from "@babel/parser";
 import { transform } from "@babel/core";
+
+const existsAsync = async path => !!(await stat(path).catch(e => false));
 
 function extractValue(node) {
    switch (node.type) {
@@ -16,7 +17,17 @@ function extractValue(node) {
       case "BooleanLiteral":
          return node.value;
       case "ArrayExpression":
-         return node.elements.map((element) => extractValue(element));
+         return node.elements
+            .map((element) => extractValue(element));
+      case "ObjectProperty":
+         return [extractValue(node.key), extractValue(node.value)]
+      case "ObjectExpression":
+         return node.properties
+            .map(prop => extractValue(prop))
+            .reduce((acc, [key, value]) => {
+               acc[key] = value;
+               return acc;
+            }, {});
       case "BinaryExpression":
          const leftValue = extractValue(node.left);
          const rightValue = extractValue(node.right);
@@ -43,6 +54,7 @@ function extractValue(node) {
          // You can modify this part based on your specific use case
          return node.name;
       default:
+         console.error("[vite-plugin-vue-wpshortcodes] Unhandled AST node", node.type);
          return null;
    }
 }
@@ -134,27 +146,7 @@ export default function wordPressShortCodeGen() {
              *       Although it can still be done, by simply using `defineProps({})`.
              */
             if (!propsNode) continue;
-
-            const props = {};
-
-            for (const {
-               key: { name: key },
-               value: { properties: propDef },
-            } of propsNode.properties) {
-               const prop = {};
-
-               for (const {
-                  key: { name: keyName },
-                  value,
-               } of propDef) {
-                  prop[keyName] = extractValue(value);
-                  if (prop[keyName] === null)
-                     console.warn(`Failed to parse ${file}.${key}.${keyName}`);
-               }
-               props[key] = prop;
-            }
-
-            components[file] = props;
+            components[file] = extractValue(propsNode);
          }
       },
 
@@ -166,7 +158,7 @@ export default function wordPressShortCodeGen() {
       async buildEnd() {
          const out = resolve(__dirname, "../includes/Classes/ShortCodes");
 
-         if (!existsSync(out)) await mkdir(out);
+         if (!await existsAsync(out)) await mkdir(out);
          for (const file of await readdir(out)) {
             await unlink(join(out, file));
          }
