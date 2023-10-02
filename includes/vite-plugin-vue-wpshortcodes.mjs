@@ -50,8 +50,6 @@ function extractValue(node) {
 
          return result;
       case "Identifier":
-         // Assuming identifiers are variables with assigned values
-         // You can modify this part based on your specific use case
          return node.name;
       default:
          console.error("[vite-plugin-vue-wpshortcodes] Unhandled AST node", node.type);
