@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 
 import vue from "@vitejs/plugin-vue";
 import copy from "rollup-plugin-copy";
-import generateShortcodes from "./includes/generate-shortcodes.mjs";
+import generateShortcodes from "./includes/vite-plugin-vue-wpshortcodes.mjs";
 
 import { fileURLToPath, URL } from "node:url";
 import { resolve } from "node:path";
